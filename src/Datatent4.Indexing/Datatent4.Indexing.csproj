@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Datatent4.Contracts\Datatent4.Contracts.csproj" />
+    <ProjectReference Include="..\Datatent4.Core\Datatent4.Core.csproj" />
+  </ItemGroup>
+
+</Project>
