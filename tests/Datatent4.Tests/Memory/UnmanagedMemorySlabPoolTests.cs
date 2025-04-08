@@ -1,4 +1,5 @@
 ﻿using Datatent4.Core.Memory.Unmanaged;
+using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace Datatent4.Tests.Memory
         public void RentSlab_ShouldReturnNonNullPointer()
         {
             // Arrange
-            var pool = NativeMemorySlabPool.Shared;
+            var pool = new NativeMemorySlabPool(NullLogger<NativeMemorySlabPool>.Instance);
 
             // Act
             var slab = pool.Rent();
@@ -43,7 +44,7 @@ namespace Datatent4.Tests.Memory
         public void SlabClear_ShouldZeroMemory()
         {
             // Arrange
-            var pool = NativeMemorySlabPool.Shared;
+            var pool = new NativeMemorySlabPool(NullLogger<NativeMemorySlabPool>.Instance);
             var slab = pool.Rent();
             var span = slab.Span;
 
@@ -70,17 +71,17 @@ namespace Datatent4.Tests.Memory
         /// Checks that calling Dispose twice on the same slab throws an ObjectDisposedException.
         /// </summary>
         [Fact]
-        public void DisposeSlab_Twice_ShouldThrowException()
+        public async Task DisposeSlab_Twice_ShouldThrowException()
         {
             // Arrange
-            var pool = NativeMemorySlabPool.Shared;
+            var pool = new NativeMemorySlabPool(NullLogger<NativeMemorySlabPool>.Instance);
             var slab = pool.Rent();
 
             // Act
             slab.Dispose();
 
             // Assert: disposing a second time must throw.
-            Assert.Throws<ObjectDisposedException>(() => slab.Dispose());
+            await Assert.ThrowsAsync<ObjectDisposedException>(async () => await Task.Run(() => slab.Dispose()));
         }
 
         /// <summary>
@@ -90,7 +91,7 @@ namespace Datatent4.Tests.Memory
         public void ReturnSlab_IncreasesFreeSlots()
         {
             // Arrange
-            var pool = NativeMemorySlabPool.Shared;
+            var pool = new NativeMemorySlabPool(NullLogger<NativeMemorySlabPool>.Instance);
             int freeSlotsBefore = pool.FreeSlots;
 
             // Act

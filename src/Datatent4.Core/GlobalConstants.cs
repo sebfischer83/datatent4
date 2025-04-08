@@ -17,5 +17,6 @@ namespace Datatent4.Core
         public const int PageHeaderBaseSize = 32; // 32 bytes
         public const int PageDataSize = PageSize - PageHeaderSize; // 16372 bytes
         public const int MaxPageCount = 1024 * 1024 * 1024; // 1GB
+        public const uint MagicNumber = 0x4D594442;
     }
 }

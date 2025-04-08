@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
+    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.14.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Datatent4.Common\Datatent4.Common.csproj" />
+    <ProjectReference Include="..\..\src\Datatent4.Contracts\Datatent4.Contracts.csproj" />
+    <ProjectReference Include="..\..\src\Datatent4.Core\Datatent4.Core.csproj" />
+  </ItemGroup>
+
+</Project>

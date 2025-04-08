@@ -13,22 +13,8 @@ namespace Datatent4.Core.Memory.Unmanaged
     /// it into fixed-size pages.
     /// </summary>
     public partial class NativeMemorySlabPool : MemorySlabPoolBase
-    {       
-        /// <summary>
-        /// Lazily initialized shared instance of the native memory slab pool.
-        /// </summary>
-        private static readonly Lazy<NativeMemorySlabPool> LAZY = new Lazy<NativeMemorySlabPool>(() =>
-        {
-            return new NativeMemorySlabPool();
-        });
-
-        /// <summary>
-        /// Gets the shared instance of the native memory slab pool.
-        /// </summary>
-        public new static NativeMemorySlabPool Shared => LAZY.Value;
-
-        // Logger instance to log errors or debug information.
-        private ILogger _logger = NullLogger.Instance;
+    {
+        private readonly ILogger _logger;
 
         // Pointer to the allocated unmanaged memory block.
         private readonly nint _memoryPtr;
@@ -38,14 +24,6 @@ namespace Datatent4.Core.Memory.Unmanaged
         /// Each slot corresponds to a page-sized segment in the unmanaged memory block.
         /// </summary>
         private readonly ConcurrentQueue<int> _freeSlots = new ConcurrentQueue<int>();
-
-        /// <summary>
-        /// Gets or sets the logger used by the pool.
-        /// </summary>
-        public ILogger Logger
-        {
-            set => _logger = value;
-        }
 
         /// <summary>
         /// Gets the current number of free memory slots in the pool.
@@ -67,12 +45,12 @@ namespace Datatent4.Core.Memory.Unmanaged
         /// Initializes a new instance of the <see cref="NativeMemorySlabPool"/> class.
         /// Allocates a contiguous block of unmanaged memory and initializes all available slots.
         /// </summary>
-        public unsafe NativeMemorySlabPool()
+        public unsafe NativeMemorySlabPool(ILogger<NativeMemorySlabPool> logger)
         {
-            // Allocate contiguous unmanaged memory and initialize with zeros.
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
             _memoryPtr = (nint)NativeMemory.AllocZeroed((nuint)MaxBufferSize);
 
-            // Calculate the total number of page slots and enqueue each slot key.
             foreach (var i in Enumerable.Range(1, MaxBufferSize / GlobalConstants.PageSize))
             {
                 _freeSlots.Enqueue(i);
@@ -91,8 +69,7 @@ namespace Datatent4.Core.Memory.Unmanaged
         /// <param name="segment">The memory slab being returned.</param>
         public override unsafe void Return(IMemorySlab segment)
         {
-            // Optionally, clear the memory before returning if required.
-            Log.Log.RentNativeMemory(_logger, (nint) ((NativeMemorySlab)segment).MemoryPtr, ((NativeMemorySlab)segment).Key);
+            //Log.Log.RentNativeMemory(_logger, (nint) ((NativeMemorySlab)segment).MemoryPtr, ((NativeMemorySlab)segment).Key);
             _freeSlots.Enqueue(((NativeMemorySlab)segment).Key);
         }
 
@@ -129,7 +106,7 @@ namespace Datatent4.Core.Memory.Unmanaged
             var nint = GetPointerToSlot(freeKey);
             void* ptr = nint.ToPointer();
 
-            Log.Log.RentNativeMemory(_logger, nint, freeKey);
+            //Log.Log.RentNativeMemory(_logger, nint, freeKey);
             
             return new NativeMemorySlab(ptr, freeKey, this);
         }

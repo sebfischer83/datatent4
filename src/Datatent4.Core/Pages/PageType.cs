@@ -4,7 +4,7 @@
     {
         Data = 0,
         Index = 1,
-        Header = 2,
+        Metadata = 2,
         Free = 3,
         Deleted = 4,
         Reserved = 5
