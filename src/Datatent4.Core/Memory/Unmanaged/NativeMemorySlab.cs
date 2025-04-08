@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualBasic;
+﻿using Datatent4.Common.Memory;
+using Microsoft.VisualBasic;
 using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
